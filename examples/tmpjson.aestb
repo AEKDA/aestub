@@ -1,0 +1,16 @@
+POST 200 /sample
+{
+  "data": {
+    "name": "Some"
+  }
+}
+EOF
+
+GET 200 /sample
+{
+  "data": {
+    "id": "1"
+    "name": "Some"
+  }
+}
+EOF

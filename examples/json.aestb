@@ -1,0 +1,20 @@
+POST 200 /sample
+request:json
+{
+  "id": 1
+}
+response:json
+{
+  "data": {
+    "name": "Some"
+  }
+}
+
+GET 200 /sample
+response:json
+{
+  "data": {
+    "id": "1"
+    "name": "Some"
+  }
+}
