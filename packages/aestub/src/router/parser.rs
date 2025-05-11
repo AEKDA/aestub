@@ -8,7 +8,7 @@ use nom::{
     combinator::opt,
     error::{Error, ErrorKind},
     multi::{many0, many1},
-    sequence::{terminated, tuple},
+    sequence::terminated,
 };
 
 use super::{Method, Route};
@@ -43,7 +43,7 @@ fn parse_path(input: &str) -> IResult<&str, String> {
 }
 fn parse_route(input: &str) -> IResult<&str, Route> {
     let request_body = Some("".to_string());
-    let (input, (method, _, status_code, _, path, _, response_body)) = tuple((
+    let (input, (method, _, status_code, _, path, _, response_body)) = ((
         parse_method,
         space1,
         parse_http_code,
@@ -52,14 +52,14 @@ fn parse_route(input: &str) -> IResult<&str, Route> {
         line_ending,
         parse_response_body,
     ))
-    .parse(input)?;
+        .parse(input)?;
 
     Ok((
         input,
         Route {
             method,
             status_code,
-            request_body,
+            _request_body: request_body,
             response_body,
             path,
         },

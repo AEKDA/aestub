@@ -1,4 +1,4 @@
-POST 200 /sample
+POST 200 /sample/{:a}/var
 {
   "data": {
     "name": "Some"
