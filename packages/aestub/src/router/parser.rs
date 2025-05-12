@@ -23,7 +23,7 @@ fn parse_method(input: &str) -> IResult<&str, Method> {
 fn parse_http_code(input: &str) -> IResult<&str, u16> {
     let (input, status_code) = digit1(input)?;
 
-    let status_code = u16::from_str_radix(status_code, 10);
+    let status_code = status_code.parse();
     match status_code {
         Ok(code) => Ok((input, code)),
         Err(_) => Err(nom::Err::Error(Error::new(input, ErrorKind::Digit))),
@@ -43,7 +43,7 @@ fn parse_path(input: &str) -> IResult<&str, String> {
 }
 fn parse_route(input: &str) -> IResult<&str, Route> {
     let request_body = Some("".to_string());
-    let (input, (method, _, status_code, _, path, _, response_body)) = ((
+    let (input, (method, _, status_code, _, path, _, response_body)) = (
         parse_method,
         space1,
         parse_http_code,
@@ -51,7 +51,7 @@ fn parse_route(input: &str) -> IResult<&str, Route> {
         parse_path,
         line_ending,
         parse_response_body,
-    ))
+    )
         .parse(input)?;
 
     Ok((

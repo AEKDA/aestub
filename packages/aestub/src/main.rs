@@ -33,11 +33,11 @@ async fn build_router(routes: RouteMap) -> Router {
 }
 
 async fn tmp_handler(Extension(route): Extension<router::Route>) -> impl IntoResponse {
-    return Response::builder()
+    Response::builder()
         .status(StatusCode::from_u16(route.status_code).unwrap_or(StatusCode::OK))
         .header("Content-Type", "application/json")
         .body(Body::from(route.response_body.clone().unwrap()))
-        .unwrap();
+        .unwrap()
 }
 
 #[tokio::main]
@@ -53,7 +53,7 @@ async fn main() {
         .collect();
     let app = build_router(routes).await;
 
-    println!("Mock server running on http://{}", "0.0.0.0:3000");
+    println!("Mock server running on http://0.0.0.0:3000");
     let listener = tokio::net::TcpListener::bind("0.0.0.0:3000").await.unwrap();
     axum::serve(listener, app).await.unwrap();
 }
