@@ -1,13 +1,15 @@
 use std::error::Error;
 
+use axum::routing::MethodFilter;
+
 mod parser;
 
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub struct Route {
     pub method: Method,
     pub status_code: u16,
     pub path: String,
-    pub request_body: Option<String>,
+    pub _request_body: Option<String>,
     pub response_body: Option<String>,
 }
 
@@ -24,13 +26,13 @@ impl Route {
     }
 }
 
-#[derive(Debug, PartialEq)]
+#[derive(Debug, PartialEq, Clone)]
 pub enum Method {
     Get,
     Post,
     Put,
     Patch,
-    Option,
+    Options,
     Delete,
     Head,
     Trace,
@@ -47,9 +49,23 @@ impl Method {
             "DELETE" => Some(Method::Delete),
             "HEAD" => Some(Method::Head),
             "TRACE" => Some(Method::Trace),
-            "OPTION" => Some(Method::Option),
+            "OPTIONS" => Some(Method::Options),
             "CONNECT" => Some(Method::Connect),
             _ => None,
+        }
+    }
+
+    pub fn to_method_filter(&self) -> MethodFilter {
+        match self {
+            Method::Get => MethodFilter::GET,
+            Method::Post => MethodFilter::POST,
+            Method::Put => MethodFilter::PUT,
+            Method::Patch => MethodFilter::PATCH,
+            Method::Options => MethodFilter::OPTIONS,
+            Method::Delete => MethodFilter::DELETE,
+            Method::Head => MethodFilter::HEAD,
+            Method::Trace => MethodFilter::TRACE,
+            Method::Connect => MethodFilter::CONNECT,
         }
     }
 }
