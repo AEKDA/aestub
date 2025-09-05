@@ -27,5 +27,8 @@ async fn main() {
 
     println!("Mock server running on http://{:?}", &address);
     let listener = TcpListener::bind(address).await.unwrap();
-    axum::serve(listener, app).await.unwrap();
+    axum::serve(listener, app)
+        .with_graceful_shutdown(handlers::shutdown_signal())
+        .await
+        .unwrap();
 }

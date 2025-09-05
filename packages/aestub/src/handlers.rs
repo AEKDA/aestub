@@ -7,7 +7,7 @@ use axum::{
     response::{IntoResponse, Response},
     routing::MethodRouter,
 };
-use tokio::sync::RwLock;
+use tokio::{signal, sync::RwLock};
 
 use crate::router;
 
@@ -38,4 +38,28 @@ async fn handler(Extension(route): Extension<router::Route>) -> impl IntoRespons
         .header("Content-Type", "application/json")
         .body(Body::from(route.response_body.clone().unwrap()))
         .unwrap()
+}
+
+pub async fn shutdown_signal() {
+    let ctrl_c = async {
+        signal::ctrl_c()
+            .await
+            .expect("failed to install Ctrl+C handler");
+    };
+
+    #[cfg(unix)]
+    let terminate = async {
+        signal::unix::signal(signal::unix::SignalKind::terminate())
+            .expect("failed to install signal handler")
+            .recv()
+            .await;
+    };
+
+    #[cfg(not(unix))]
+    let terminate = std::future::pending::<()>();
+
+    tokio::select! {
+        _ = ctrl_c => {},
+        _ = terminate => {},
+    }
 }
